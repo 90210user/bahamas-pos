@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block content %}
+<h4 class="mb-3">Transactions</h4>
+<form class="row g-2 mb-3">
+  <div class="col-6 col-md-3">
+    <label class="form-label">From</label>
+    <input type="date" class="form-control" name="from" value="{{ f_from }}" />
+  </div>
+  <div class="col-6 col-md-3">
+    <label class="form-label">To</label>
+    <input type="date" class="form-control" name="to" value="{{ f_to }}" />
+  </div>
+  <div class="col-6 col-md-3">
+    <label class="form-label">Type</label>
+    <select class="form-select" name="type">
+      <option value="all" {{ 'selected' if f_type=='all' }}>All</option>
+      <option value="sale" {{ 'selected' if f_type=='sale' }}>Sales</option>
+      <option value="expense" {{ 'selected' if f_type=='expense' }}>Expenses</option>
+    </select>
+  </div>
+  <div class="col-6 col-md-3">
+    <label class="form-label">Payment</label>
+    <select class="form-select" name="payment">
+      <option value="all" {{ 'selected' if f_pay=='all' }}>All</option>
+      <option value="Cash" {{ 'selected' if f_pay=='Cash' }}>Cash</option>
+      <option value="Mpesa" {{ 'selected' if f_pay=='Mpesa' }}>Mpesa</option>
+      <option value="Credit" {{ 'selected' if f_pay=='Credit' }}>Credit</option>
+    </select>
+  </div>
+  <div class="col-12">
+    <button class="btn btn-accent">Apply</button>
+  </div>
+</form>
+<form method="post" onsubmit="return confirm('Delete selected records?')" class="mb-2">
+  <input type="hidden" name="action" value="delete_selected" />
+  <div class="mb-2">
+    <button type="submit" class="btn btn-danger btn-sm">Delete Selected</button>
+  </div>
+  <div class="table-responsive">
+  <table class="table table-sm table-hover align-middle">
+    <thead>
+      <tr>
+        <th><input type="checkbox" onclick="document.querySelectorAll('input[name=selected_txn]').forEach(cb=>cb.checked=this.checked)" /></th>
+        <th>ID</th>
+        <th>Type</th>
+        <th>Date</th>
+        <th>Amount</th>
+        <th>Payment</th>
+        <th>Customer/Description</th>
+        <th>Paid</th>
+        <th>Cleared Date</th>
+        <th>Cleared By</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in rows %}
+      <tr>
+        <td><input type="checkbox" name="selected_txn" value="{{ r.id }}" /></td>
+        <td>{{ r.id }}</td>
+        <td>{{ r.type }}</td>
+        <td>{{ r.date or '-' }}</td>
+        <td>KES {{ '%.2f'|format(r.total) }}</td>
+        <td>{{ r.payment_method }}</td>
+        <td>{{ r.customer_name or r.description or '-' }}</td>
+        <td>{{ 'Yes' if r.paid else 'No' }}</td>
+        <td>{{ r.date_cleared or '-' }}</td>
+        <td>{{ r.payment_method_cleared or '-' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</form>
+{% endblock %}
+
+
+

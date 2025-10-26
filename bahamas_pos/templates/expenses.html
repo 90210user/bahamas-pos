@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<h4 class="mb-3">Record Expense</h4>
+<form method="post" class="row g-3">
+  <div class="col-12 col-md-8">
+    <label class="form-label">Description</label>
+    <input class="form-control" name="description" required />
+  </div>
+  <div class="col-6 col-md-2">
+    <label class="form-label">Amount</label>
+    <input type="number" step="0.01" min="0.01" class="form-control" name="amount" required />
+  </div>
+  <div class="col-6 col-md-2">
+    <label class="form-label">Date</label>
+    <input type="date" class="form-control" name="date" />
+  </div>
+  <div class="col-12">
+    <button class="btn btn-accent">Add Expense</button>
+  </div>
+</form>
+{% endblock %}
+
+
+

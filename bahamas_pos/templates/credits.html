@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block content %}
+<h4 class="mb-3">Manage Credits</h4>
+<form method="post" class="row g-3 mb-4">
+  <div class="col-12 col-md-4">
+    <label class="form-label">Customer</label>
+    <select class="form-select" name="customer" required>
+      {% for customer, info in credits.items() %}
+        <option value="{{ customer }}">{{ customer }} (KES {{ '%.2f'|format(info.amount) }})</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-6 col-md-3">
+    <label class="form-label">Clear With</label>
+    <select class="form-select" name="method">
+      <option>Cash</option>
+      <option>Mpesa</option>
+    </select>
+  </div>
+  <div class="col-6 col-md-3">
+    <label class="form-label">Clearance Date</label>
+    <input type="date" class="form-control" name="date" />
+  </div>
+  <div class="col-12">
+    <button class="btn btn-accent">Clear Credit</button>
+  </div>
+</form>
+
+<h5 class="mb-2">Credits</h5>
+<form method="post" onsubmit="return confirm('Delete selected credits?')" class="mb-2">
+  <input type="hidden" name="action" value="delete_selected" />
+  <button type="submit" class="btn btn-danger btn-sm">Delete Selected</button>
+</form>
+<div class="table-responsive">
+  <table class="table table-sm table-hover align-middle">
+    <thead>
+      <tr>
+        <th><input type="checkbox" onclick="document.querySelectorAll('input[name=selected_credit]').forEach(cb=>cb.checked=this.checked)" /></th>
+        <th>Customer</th>
+        <th>Amount Owed</th>
+        <th>Credit Date</th>
+        <th>Clearance Date</th>
+        <th>Payment Method</th>
+        <th>Status</th>
+        <th>Transactions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in credit_rows %}
+      <tr>
+        <td><input type="checkbox" name="selected_credit" value="{{ row.customer }}" /></td>
+        <td>{{ row.customer }}</td>
+        <td>KES {{ '%.2f'|format(row.amount) }}</td>
+        <td>{{ row.date_created or '-' }}</td>
+        <td>{{ row.date_cleared or '-' }}</td>
+        <td>{{ row.payment_method_cleared or '-' }}</td>
+        <td>{{ row.status }}</td>
+        <td>
+          {{ row.transactions }}
+          <form method="post" class="d-inline ms-2" onsubmit="return confirm('Delete credit for {{ row.customer }}? This cannot be undone.')">
+            <input type="hidden" name="action" value="delete_one" />
+            <input type="hidden" name="customer" value="{{ row.customer }}" />
+            <button class="btn btn-sm btn-danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+

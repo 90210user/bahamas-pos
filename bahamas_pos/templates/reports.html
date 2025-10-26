@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block content %}
+<h4 class="mb-3">Reports</h4>
+
+<form class="row g-3 mb-3" method="get">
+  <div class="col-6 col-md-3">
+    <label class="form-label">From</label>
+    <input type="date" class="form-control" name="from" value="{{ request.args.get('from','') }}" />
+  </div>
+  <div class="col-6 col-md-3">
+    <label class="form-label">To</label>
+    <input type="date" class="form-control" name="to" value="{{ request.args.get('to','') }}" />
+  </div>
+  <div class="col-12 col-md-6 d-flex align-items-end gap-2">
+    <button class="btn btn-accent">Apply</button>
+    <a class="btn btn-secondary" href="{{ url_for('reports_page') }}">Clear</a>
+    <a class="btn btn-success" href="{{ url_for('export_reports_excel', **{'from': request.args.get('from',''), 'to': request.args.get('to','')}) }}">Export Excel</a>
+    <a class="btn btn-danger" href="{{ url_for('export_reports_pdf', **{'from': request.args.get('from',''), 'to': request.args.get('to','')}) }}">Export PDF</a>
+  </div>
+</form>
+
+<div class="row g-3 mb-4">
+  <div class="col-12 col-md-6">
+    <div class="glass p-3">
+      <h6>Sales Summary</h6>
+      <ul class="list-unstyled mb-0">
+        <li>Total Sales (Paid): KES {{ '%.2f'|format(summary.total_sales) }}</li>
+        <li>Outstanding Credits: KES {{ '%.2f'|format(summary.total_credits) }}</li>
+        <li>Total Expenses: KES {{ '%.2f'|format(summary.total_expenses) }}</li>
+        <li>System Balance: KES {{ '%.2f'|format(summary.system_balance) }}</li>
+        <li>Total Transactions: {{ summary.total_transactions }}</li>
+      </ul>
+    </div>
+  </div>
+  <div class="col-12 col-md-6">
+    <div class="glass p-3">
+      <h6>Exports</h6>
+      <p class="text-muted">Export to Excel/PDF coming next.</p>
+      <div class="d-flex gap-2">
+        <button disabled class="btn btn-secondary">Export Excel</button>
+        <button disabled class="btn btn-secondary">Export PDF</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h5 class="mb-2">Stock Report</h5>
+{% if not stock_rows %}
+<div class="alert alert-info">No records found for selected range.</div>
+{% endif %}
+<div class="table-responsive">
+  <table class="table table-sm table-hover align-middle">
+    <thead>
+      <tr>
+        <th>Code</th>
+        <th>Item Name</th>
+        <th>Received</th>
+        <th>Used</th>
+        <th>Remaining</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in stock_rows %}
+      <tr>
+        <td>{{ r.code }}</td>
+        <td>{{ r.name }}</td>
+        <td>{{ r.received }}</td>
+        <td>{{ r.used }}</td>
+        <td>{{ r.remaining }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+
+

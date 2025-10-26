@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block content %}
+<h4 class="mb-3">Record Sale</h4>
+<form method="post" class="row g-3">
+  <div class="col-12">
+    <label class="form-label">Sale Type</label>
+    <select class="form-select" name="sale_type" id="sale_type" onchange="toggleSaleType()">
+      <option value="stock">Stock Item</option>
+      <option value="service">Service</option>
+    </select>
+  </div>
+  <div class="col-12 col-md-6">
+    <label class="form-label">Item</label>
+    <select class="form-select" name="item_code" id="item_code">
+      {% for it in items %}
+        {% if it.type == 'product' %}
+        <option value="{{ it.code }}">{{ it.code }} - {{ it.name }} (KES {{ '%.2f'|format(it.selling_price or it.price) }})</option>
+        {% endif %}
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-12 col-md-6" id="service_group" style="display:none;">
+    <label class="form-label">Service</label>
+    <select class="form-select" name="service_id" id="service_id">
+      {% for s in services %}
+        <option value="{{ s.id }}">{{ s.service_name }} (KES {{ '%.2f'|format(s.price) }})</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-6 col-md-3">
+    <label class="form-label">Quantity</label>
+    <input type="number" min="1" value="1" class="form-control" name="quantity" required />
+  </div>
+  <div class="col-6 col-md-3">
+    <label class="form-label">Payment Method</label>
+    <select class="form-select" name="payment_method">
+      <option>Cash</option>
+      <option>Mpesa</option>
+      <option>Credit</option>
+    </select>
+  </div>
+  <div class="col-12 col-md-6">
+    <label class="form-label">Customer (for Credit)</label>
+    <input class="form-control" name="customer_name" />
+  </div>
+  <div class="col-12 col-md-6">
+    <label class="form-label">Date</label>
+    <input type="date" class="form-control" name="date" value="{{ now() if now else '' }}" />
+  </div>
+  <div class="col-12">
+    <button class="btn btn-accent">Process Sale</button>
+  </div>
+</form>
+<script>
+function toggleSaleType(){
+  var t = document.getElementById('sale_type').value;
+  var svc = document.getElementById('service_group');
+  var item = document.getElementById('item_code');
+  if(t === 'service'){
+    svc.style.display='block';
+    item.setAttribute('disabled','disabled');
+  } else {
+    svc.style.display='none';
+    item.removeAttribute('disabled');
+  }
+}
+</script>
+{% endblock %}
+
+
